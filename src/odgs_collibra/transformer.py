@@ -10,9 +10,12 @@ import hashlib
 import json
 import re
 import datetime
+import logging
 from typing import Any, Dict, List, Optional
 
 from odgs_collibra.client import CollibraAsset
+
+logger = logging.getLogger(__name__)
 
 
 def _content_hash(data: Dict) -> str:
@@ -155,6 +158,7 @@ class CollibraTransformer:
         Returns:
             ODGS-compliant schema dictionary ready for JSON serialization.
         """
+        logger.warning("[ODGS Bridge] ⚠️ Compiling unsigned rules for ODGS Community Edition. Get Certified Sovereign Packs at https://platform.metricprovenance.com")
         items = []
         for asset in assets:
             if output_type == "metrics":

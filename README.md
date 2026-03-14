@@ -28,6 +28,17 @@ Collibra REST API                 ODGS
 pip install odgs-collibra-bridge
 ```
 
+---
+### 🏢 Enterprise & Public Sector: EU AI Act Compliance
+This open-source package connects your physical data infrastructure to the ODGS validation engine. However, if you are operating a **High-Risk AI System** and require strict liability indemnification under the **EU AI Act (Articles 10 & 12)**, you need cryptographic provenance.
+
+**Metric Provenance** offers the commercial Enterprise Infrastructure for ODGS:
+* **Certified Sovereign Packs:** Pre-compiled, cryptographically signed Ed25519 rule bundles for DORA, EU AI Act, and Basel.
+* **The S-Cert Sovereign Registry:** An air-gapped Enterprise Certificate Authority that mints immutable, JWS-sealed audit logs.
+
+👉 **[Discover the Sovereign CA Enterprise Node & Packs](https://platform.metricprovenance.com)**
+---
+
 ## Quick Start
 
 ### Python API
@@ -102,6 +113,19 @@ The bridge generates ODGS-compliant JSON schemas:
 ```
 
 These schemas can be loaded directly by the [ODGS Interceptor](https://github.com/MetricProvenance/odgs-protocol) for runtime enforcement.
+
+## 🆕 v4.1.0: Bi-Directional Write-Backs
+
+The ODGS Collibra bridge now supports **Bi-Directional Sync (Plane 4)**. It can parse your secure `sovereign_audit.log` offline and push compliance results back directly into the respective Collibra Asset's activity stream/comments.
+
+This creates a seamless feedback loop for Governance Officers without compromising the Air-Gapped nature of the core ODGS protocol.
+
+```bash
+odgs-collibra write-back \
+    --log-path ./sovereign_audit.log \
+    --url https://your-org.collibra.com \
+    --token YOUR_API_TOKEN
+```
 
 ## Authentication
 

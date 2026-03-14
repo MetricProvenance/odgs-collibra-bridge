@@ -80,6 +80,24 @@ class CollibraClient:
         response.raise_for_status()
         return response.json()
 
+    def _post(self, endpoint: str, json_data: Dict) -> Dict:
+        """Execute a POST request against the Collibra REST API."""
+        url = f"{self.base_url}/rest/2.0/{endpoint}"
+        logger.debug(f"POST {url} data={json_data}")
+
+        response = self._session.post(url, json=json_data, timeout=self.timeout)
+        response.raise_for_status()
+        return response.json()
+
+    def add_asset_comment(self, asset_id: str, content: str) -> Dict:
+        """Add a comment to a specific Collibra asset (used for ODGS write-backs)."""
+        payload = {
+            "baseResourceId": asset_id,
+            "baseResourceType": "Asset",
+            "content": content
+        }
+        return self._post("comments", json_data=payload)
+
     def list_communities(self, name: Optional[str] = None) -> List[Dict]:
         """List all communities, optionally filtered by name."""
         params = {"limit": 100}
