@@ -11,7 +11,7 @@
 
 ## What It Does
 
-The ODGS Collibra Bridge connects to your Collibra Data Intelligence Platform and transforms passive business glossary assets (terms, metrics, data quality rules) into ODGS-compliant JSON schemas that the [Universal Interceptor](https://github.com/MetricProvenance/odgs-protocol) can enforce at runtime.
+The ODGS Collibra Bridge connects to your Collibra Data Intelligence Platform and transforms passive business glossary assets (terms, metrics, data quality rules) into ODGS-compliant JSON schemas that the [Universal Interceptor (ODGS Core Engine)](https://github.com/MetricProvenance/odgs-protocol) can enforce at runtime.
 
 ```
 Collibra REST API                 ODGS
