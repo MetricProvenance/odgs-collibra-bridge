@@ -90,8 +90,8 @@ class CollibraTransformer:
             },
             "provenance": {
                 "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.1.0",
-                "synced_at": datetime.datetime.utcnow().isoformat() + "Z",
+                "bridge_version": "0.2.0",
+                "synced_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "source_url": f"collibra://{asset.id}",
             },
         }
@@ -132,8 +132,8 @@ class CollibraTransformer:
             "source_authority": f"collibra:{asset.community_name}",
             "provenance": {
                 "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.1.0",
-                "synced_at": datetime.datetime.utcnow().isoformat() + "Z",
+                "bridge_version": "0.2.0",
+                "synced_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "source_url": f"collibra://{asset.id}",
             },
         }
@@ -167,13 +167,13 @@ class CollibraTransformer:
                 items.append(self.asset_to_rule(asset, severity=severity))
 
         schema = {
-            "$schema": "https://metricprovenance.com/schemas/odgs/v4",
+            "$schema": "https://metricprovenance.com/schemas/odgs/v5",
             "metadata": {
                 "source": "collibra",
                 "organization": self.organization,
                 "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.1.0",
-                "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
+                "bridge_version": "0.2.0",
+                "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "asset_count": len(items),
             },
             "items": items,

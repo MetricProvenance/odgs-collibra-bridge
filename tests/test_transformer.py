@@ -72,7 +72,7 @@ class TestMetricTransformation:
 
         assert prov["bridge"] == "odgs-collibra-bridge"
         assert prov["source_url"] == "collibra://asset-001"
-        assert prov["synced_at"].endswith("Z")
+        assert "+00:00" in prov["synced_at"]  # timezone-aware ISO 8601 (updated in v5.0.1)
 
     def test_urn_sanitization(self, transformer):
         weird_asset = CollibraAsset(
@@ -111,7 +111,7 @@ class TestSchemaPackOutput:
     def test_schema_metadata(self, transformer, sample_asset):
         schema = transformer.transform_assets([sample_asset], output_type="metrics")
 
-        assert schema["$schema"] == "https://metricprovenance.com/schemas/odgs/v4"
+        assert schema["$schema"] == "https://metricprovenance.com/schemas/odgs/v5"
         assert schema["metadata"]["source"] == "collibra"
         assert schema["metadata"]["organization"] == "acme_corp"
         assert schema["metadata"]["asset_count"] == 1
