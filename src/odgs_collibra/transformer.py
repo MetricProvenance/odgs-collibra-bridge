@@ -90,7 +90,7 @@ class CollibraTransformer:
             },
             "provenance": {
                 "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.2.0",
+                "bridge_version": "0.3.0",
                 "synced_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "source_url": f"collibra://{asset.id}",
             },
@@ -130,9 +130,14 @@ class CollibraTransformer:
             "severity": severity,
             "logic_expression": logic_expr,
             "source_authority": f"collibra:{asset.community_name}",
+            # ODGS S-Cert legislative lineage fields (v5.1.0)
+            "legislative_source": asset.attributes.get("Legislative Source", "BRIDGE_GENERATED_UNATTESTED"),
+            "verbatim_source_text": asset.attributes.get("Verbatim Source Text", ""),
+            "semantic_hash": "UNATTESTED",  # Upgraded to Registry-attested hash via platform.metricprovenance.com
+            "verdict_on_pass": "PASS",
             "provenance": {
                 "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.2.0",
+                "bridge_version": "0.3.0",
                 "synced_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "source_url": f"collibra://{asset.id}",
             },
@@ -172,7 +177,7 @@ class CollibraTransformer:
                 "source": "collibra",
                 "organization": self.organization,
                 "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.2.0",
+                "bridge_version": "0.3.0",
                 "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "asset_count": len(items),
             },
