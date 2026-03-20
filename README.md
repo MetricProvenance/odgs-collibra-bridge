@@ -2,25 +2,49 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![ODGS](https://img.shields.io/badge/ODGS-v5.1.0-0055AA)](https://github.com/MetricProvenance/odgs-protocol)
+[![PyPI](https://img.shields.io/pypi/v/odgs-collibra-bridge)](https://pypi.org/project/odgs-collibra-bridge/)
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://pypi.org/project/odgs-collibra-bridge/)
 
 **Transform your Collibra Business Glossary into active ODGS runtime enforcement schemas.**
 
 > Collibra documents your data. ODGS enforces it.
 
+The ODGS Collibra Bridge is an **institutional connector** that translates Collibra Business Glossary assets — terms, metrics, and data quality rules — into cryptographically addressable ODGS enforcement schemas. It bridges the gap between passive data cataloguing and active regulatory enforcement, making Collibra governance decisions mechanically executable at pipeline runtime.
+
+Architecturally aligned with **CEN/CENELEC JTC 25** and **NEN 381 525** federated data sovereignty principles.
+
 ---
 
-## What It Does
+## Architecture
 
-The ODGS Collibra Bridge connects to your Collibra Data Intelligence Platform and transforms passive business glossary assets (terms, metrics, data quality rules) into ODGS-compliant JSON schemas that the [Universal Interceptor (ODGS Core Engine)](https://github.com/MetricProvenance/odgs-protocol) can enforce at runtime.
+```mermaid
+flowchart LR
+    subgraph Collibra["Collibra Data Intelligence Platform"]
+        BG["Business Glossary\n(Terms & Metrics)"]
+        DQ["Data Quality Rules"]
+        DD["Data Dictionary"]
+    end
 
+    subgraph Bridge["odgs-collibra-bridge"]
+        T["CollibraBridge\n.sync()"]
+        TR["Transformer\n→ ODGS Schema"]
+    end
+
+    subgraph ODGS["ODGS Protocol (odgs>=5.1.0)"]
+        I["Universal Interceptor\nHARD_STOP / WARNING / LOG_ONLY"]
+        WB["Write-Back\n→ Collibra Activity Stream"]
+    end
+
+    subgraph MP["Metric Provenance (Commercial)"]
+        SC["S-Cert Registry\n(JWS Audit Seal)"]
+    end
+
+    BG & DQ & DD --> T --> TR --> I
+    I -->|"sovereign_audit.log"| WB --> Collibra
+    I -->|"Certified S-Cert"| SC
 ```
-Collibra REST API                 ODGS
-┌──────────────┐     Bridge      ┌──────────────┐
-│ Business     │ ──────────────→ │ JSON Schema  │
-│ Glossary     │   reads terms,  │ + Interceptor│
-│ + Data Dict. │   outputs ODGS  │ = Enforcement│
-└──────────────┘                 └──────────────┘
-```
+
+---
 
 ## Install
 
@@ -28,15 +52,6 @@ Collibra REST API                 ODGS
 pip install odgs-collibra-bridge
 ```
 
----
-### 🏢 Enterprise & Public Sector: EU AI Act Compliance
-This open-source package connects your physical data infrastructure to the ODGS validation engine. However, if you are operating a **High-Risk AI System** and require strict liability indemnification under the **EU AI Act (Articles 10 & 12)**, you need cryptographic provenance.
-
-**Metric Provenance** offers the commercial Enterprise Infrastructure for ODGS:
-* **Certified Sovereign Packs:** Pre-compiled, cryptographically signed Ed25519 rule bundles for DORA, EU AI Act, and Basel.
-* **The S-Cert Sovereign Registry:** An air-gapped Enterprise Certificate Authority that mints immutable, JWS-sealed audit logs.
-
-👉 **[Discover the Sovereign CA Enterprise Node & Packs](https://platform.metricprovenance.com)**
 ---
 
 ## Quick Start
@@ -59,7 +74,7 @@ bridge.sync(
     output_type="metrics",
 )
 
-# Sync DQ rules → ODGS enforcement rules
+# Sync DQ rules → ODGS enforcement rules (HARD_STOP on violation)
 bridge.sync(
     community="Data Quality",
     output_dir="./schemas/custom/",
@@ -80,21 +95,18 @@ odgs-collibra sync \
     --output ./schemas/custom/ \
     --type metrics
 
-# Or use environment variable
-export COLLIBRA_API_TOKEN=your-token
-odgs-collibra sync \
+# Push compliance results back to Collibra activity stream
+odgs-collibra write-back \
+    --log-path ./sovereign_audit.log \
     --url https://your-org.collibra.com \
-    --org acme_corp \
-    --community "Finance"
+    --token YOUR_API_TOKEN
 ```
 
-### Output
-
-The bridge generates ODGS-compliant JSON schemas:
+### Output Schema
 
 ```json
 {
-  "$schema": "https://metricprovenance.com/schemas/odgs/v4",
+  "$schema": "https://metricprovenance.com/schemas/odgs/v5",
   "metadata": {
     "source": "collibra",
     "organization": "acme_corp",
@@ -103,22 +115,22 @@ The bridge generates ODGS-compliant JSON schemas:
   },
   "items": [
     {
-      "metric_urn": "urn:odgs:custom:acme_corp:net_revenue",
+      "rule_urn": "urn:odgs:custom:acme_corp:net_revenue",
       "name": "Net Revenue",
+      "severity": "HARD_STOP",
       "logic": { "formula": "gross_revenue - returns" },
+      "plain_english_description": "Net revenue must equal gross revenue minus returns",
       "content_hash": "a1b2c3..."
     }
   ]
 }
 ```
 
-These schemas can be loaded directly by the [ODGS Interceptor](https://github.com/MetricProvenance/odgs-protocol) for runtime enforcement.
+---
 
-## 🆕 v4.1.0: Bi-Directional Write-Backs
+## Bi-Directional Write-Backs
 
-The ODGS Collibra bridge now supports **Bi-Directional Sync (Plane 4)**. It can parse your secure `sovereign_audit.log` offline and push compliance results back directly into the respective Collibra Asset's activity stream/comments.
-
-This creates a seamless feedback loop for Governance Officers without compromising the Air-Gapped nature of the core ODGS protocol.
+The bridge supports **Bi-Directional Sync**: it parses your `sovereign_audit.log` offline and pushes compliance results back into the corresponding Collibra Asset's activity stream — creating a seamless feedback loop for Governance Officers without compromising the air-gapped nature of the core ODGS protocol.
 
 ```bash
 odgs-collibra write-back \
@@ -127,30 +139,46 @@ odgs-collibra write-back \
     --token YOUR_API_TOKEN
 ```
 
-## Authentication
+---
 
-The bridge supports two authentication methods:
+## Authentication
 
 | Method | Flag | Environment Variable |
 |---|---|---|
 | API Token (recommended) | `--token` | `COLLIBRA_API_TOKEN` |
 | Basic Auth | `--username` + `--password` | — |
 
-## URN Namespace
+---
 
-All generated schemas use the `urn:odgs:custom:<org>:*` namespace, ensuring clean separation from Sovereign URNs (`urn:odgs:sov:*`) and other organizations.
+## Regulatory Alignment
+
+This bridge is designed for organisations governed by:
+
+| Regulation | Relevance |
+|---|---|
+| **EU AI Act (2024/1689) Articles 10 & 12** | Data governance & audit trail requirements for High-Risk AI Systems |
+| **DORA (Regulation EU 2022/2554)** | ICT operational resilience — data lineage and incident traceability |
+| **GDPR Article 5(2)** | Accountability principle — demonstrable data governance |
+| **NEN 381 525** | Dutch federated data sovereignty standard |
+
+> For cryptographic legal indemnity (Ed25519 JWS audit seals, certified Sovereign Packs for DORA/EU AI Act), see the **[Metric Provenance Enterprise Platform](https://platform.metricprovenance.com)**.
+
+---
 
 ## Requirements
 
 - Python ≥ 3.9
-- `odgs` ≥ 4.0.0 (core protocol)
+- `odgs` ≥ 5.1.0 (core protocol)
 - Collibra Data Intelligence Platform (any version with REST API v2)
+
+---
 
 ## Related
 
 - [ODGS Protocol](https://github.com/MetricProvenance/odgs-protocol) — The core enforcement engine
-- [ODGS Databricks Bridge](https://github.com/MetricProvenance/odgs-databricks-bridge) — Unity Catalog integration (planned)
-- [ODGS Snowflake Bridge](https://github.com/MetricProvenance/odgs-snowflake-bridge) — Snowflake integration (planned)
+- [ODGS FLINT Bridge](https://github.com/MetricProvenance/odgs-flint-bridge) — TNO FLINT legal ontology connector
+- [ODGS Databricks Bridge](https://github.com/MetricProvenance/odgs-databricks-bridge) — Unity Catalog integration
+- [ODGS Snowflake Bridge](https://github.com/MetricProvenance/odgs-snowflake-bridge) — Snowflake integration
 
 ---
 
