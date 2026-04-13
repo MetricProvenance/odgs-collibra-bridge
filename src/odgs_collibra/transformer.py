@@ -109,7 +109,7 @@ class CollibraTransformer:
 
         Args:
             asset: The Collibra asset representing a DQ rule or policy
-            severity: ODGS severity level (HARD_STOP, WARNING, INFO)
+            severity: ODGS severity level (HARD_STOP, SOFT_STOP, WARNING, INFO)
         """
         rule_id = _sanitize_urn(asset.name)
         urn = f"urn:odgs:custom:{self.organization}:rule:{rule_id}"
@@ -158,7 +158,7 @@ class CollibraTransformer:
         Args:
             assets: List of CollibraAsset objects
             output_type: "metrics" or "rules"
-            severity: Severity for rule output (HARD_STOP, WARNING, INFO)
+            severity: Severity for rule output (HARD_STOP, SOFT_STOP, WARNING, INFO)
 
         Returns:
             ODGS-compliant schema dictionary ready for JSON serialization.

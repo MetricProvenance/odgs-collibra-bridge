@@ -72,7 +72,7 @@ class CollibraBridge:
             output_dir: Directory to write ODGS JSON files
             output_type: "metrics" or "rules"
             include_attributes: Fetch detailed attributes per asset
-            severity: Rule severity level (HARD_STOP, WARNING, INFO)
+            severity: Rule severity level (HARD_STOP, SOFT_STOP, WARNING, INFO)
 
         Returns:
             Absolute path to the generated schema file.

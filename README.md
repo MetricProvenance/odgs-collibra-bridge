@@ -1,7 +1,7 @@
 # ODGS Collibra Bridge
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![ODGS](https://img.shields.io/badge/ODGS-v5.1.0-0055AA)](https://github.com/MetricProvenance/odgs-protocol)
+[![ODGS](https://img.shields.io/badge/ODGS-v5.1+_|_v6.0_Compatible-0055AA)](https://github.com/MetricProvenance/odgs-protocol)
 [![PyPI](https://img.shields.io/pypi/v/odgs-collibra-bridge)](https://pypi.org/project/odgs-collibra-bridge/)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://pypi.org/project/odgs-collibra-bridge/)
 
@@ -31,7 +31,7 @@ flowchart LR
     end
 
     subgraph ODGS["ODGS Protocol (odgs>=5.1.0)"]
-        I["Universal Interceptor\nHARD_STOP / WARNING / LOG_ONLY"]
+        I["Universal Interceptor\nHARD_STOP / SOFT_STOP / WARNING / LOG_ONLY"]
         WB["Write-Back\n→ Collibra Activity Stream"]
     end
 
@@ -168,7 +168,7 @@ This bridge is designed for organisations governed by:
 ## Requirements
 
 - Python ≥ 3.9
-- `odgs` ≥ 5.1.0 (core protocol)
+- `odgs` ≥ 5.1.0 (core protocol — v6.0 compatible)
 - Collibra Data Intelligence Platform (any version with REST API v2)
 
 ---
