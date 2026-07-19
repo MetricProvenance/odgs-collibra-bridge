@@ -130,7 +130,7 @@ odgs-collibra write-back \
 
 ## Bi-Directional Write-Backs
 
-The bridge supports **Bi-Directional Sync**: it parses your `sovereign_audit.log` offline and pushes compliance results back into the corresponding Collibra Asset's activity stream — creating a seamless feedback loop for Governance Officers without compromising the air-gapped nature of the core ODGS protocol.
+The bridge supports **Bi-Directional Sync**: it parses your `sovereign_audit.log` offline and pushes compliance results back into the corresponding Collibra Asset's activity stream — creating a deterministic feedback loop for Governance Officers without compromising the air-gapped nature of the core ODGS protocol.
 
 ```bash
 odgs-collibra write-back \
@@ -161,7 +161,7 @@ This bridge is designed for organisations governed by:
 | **GDPR Article 5(2)** | Accountability principle — demonstrable data governance |
 | **NEN 381 525** | Dutch federated data sovereignty standard |
 
-> For cryptographic legal indemnity (Ed25519 JWS audit seals, certified Sovereign Packs for DORA/EU AI Act), see the **[Metric Provenance Enterprise Platform](https://platform.metricprovenance.com)**.
+> For cryptographic legal indemnity (Ed25519 JWS audit seals, certified Sovereign Packs for DORA/EU AI Act), see the **[Metric Provenance Enterprise Platform](https://registry.metricprovenance.com)**.
 
 ---
 

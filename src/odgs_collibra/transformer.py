@@ -90,7 +90,7 @@ class CollibraTransformer:
             },
             "provenance": {
                 "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.3.0",
+                "bridge_version": "0.4.1",
                 "synced_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "source_url": f"collibra://{asset.id}",
             },
@@ -133,11 +133,11 @@ class CollibraTransformer:
             # ODGS S-Cert legislative lineage fields (v5.1.0)
             "legislative_source": asset.attributes.get("Legislative Source", "BRIDGE_GENERATED_UNATTESTED"),
             "verbatim_source_text": asset.attributes.get("Verbatim Source Text", ""),
-            "semantic_hash": "UNATTESTED",  # Upgraded to Registry-attested hash via platform.metricprovenance.com
+            "semantic_hash": "UNATTESTED",  # Upgraded to Registry-attested hash via registry.metricprovenance.com
             "verdict_on_pass": "PASS",
             "provenance": {
                 "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.3.0",
+                "bridge_version": "0.4.1",
                 "synced_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "source_url": f"collibra://{asset.id}",
             },
@@ -163,7 +163,7 @@ class CollibraTransformer:
         Returns:
             ODGS-compliant schema dictionary ready for JSON serialization.
         """
-        logger.warning("[ODGS Bridge] ⚠️ Compiling unsigned rules for ODGS Community Edition. Get Certified Sovereign Packs at https://platform.metricprovenance.com")
+        logger.warning("[ODGS Bridge] ⚠️ Compiling unsigned rules for ODGS Community Edition. Get Certified Sovereign Packs at https://registry.metricprovenance.com")
         items = []
         for asset in assets:
             if output_type == "metrics":
@@ -177,7 +177,7 @@ class CollibraTransformer:
                 "source": "collibra",
                 "organization": self.organization,
                 "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.3.0",
+                "bridge_version": "0.4.1",
                 "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "asset_count": len(items),
             },
