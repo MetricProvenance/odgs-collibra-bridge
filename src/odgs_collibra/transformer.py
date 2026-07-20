@@ -90,7 +90,7 @@ class CollibraTransformer:
             },
             "provenance": {
                 "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.4.1",
+                "bridge_version": "0.4.2",
                 "synced_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "source_url": f"collibra://{asset.id}",
             },
@@ -137,7 +137,7 @@ class CollibraTransformer:
             "verdict_on_pass": "PASS",
             "provenance": {
                 "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.4.1",
+                "bridge_version": "0.4.2",
                 "synced_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "source_url": f"collibra://{asset.id}",
             },
@@ -177,7 +177,7 @@ class CollibraTransformer:
                 "source": "collibra",
                 "organization": self.organization,
                 "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.4.1",
+                "bridge_version": "0.4.2",
                 "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "asset_count": len(items),
             },

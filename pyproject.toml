@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "odgs-collibra-bridge"
-version = "0.4.1"
+version = "0.4.2"
 description = "Bridge: Collibra Business Glossary → ODGS Runtime Enforcement Schemas"
 readme = "README.md"
 requires-python = ">=3.9"

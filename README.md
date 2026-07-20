@@ -11,7 +11,7 @@
 
 The ODGS Collibra Bridge is an **institutional connector** that translates Collibra Business Glossary assets — terms, metrics, and data quality rules — into cryptographically addressable ODGS enforcement schemas. It bridges the gap between passive data cataloguing and active regulatory enforcement, making Collibra governance decisions mechanically executable at pipeline runtime.
 
-Architecturally aligned with **CEN/CENELEC JTC 25** and **NEN 381 525** federated data sovereignty principles.
+Architecturally aligned with federated data sovereignty principles, and on a path toward standardization.
 
 ---
 
@@ -159,7 +159,6 @@ This bridge is designed for organisations governed by:
 | **EU AI Act (2024/1689) Articles 10 & 12** | Data governance & audit trail requirements for High-Risk AI Systems |
 | **DORA (Regulation EU 2022/2554)** | ICT operational resilience — data lineage and incident traceability |
 | **GDPR Article 5(2)** | Accountability principle — demonstrable data governance |
-| **NEN 381 525** | Dutch federated data sovereignty standard |
 
 > For cryptographic legal indemnity (Ed25519 JWS audit seals, certified Sovereign Packs for DORA/EU AI Act), see the **[Metric Provenance Enterprise Platform](https://registry.metricprovenance.com)**.
 
