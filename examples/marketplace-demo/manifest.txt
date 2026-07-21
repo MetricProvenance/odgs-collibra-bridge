@@ -1,0 +1,77 @@
+ODGS x Collibra demo — recording manifest
+Generated: 2026-07-21
+Directory: /home/claude/work/collibra-demo/recording/
+
+DELIVERABLES
+------------
+segment_01.mp4
+  Resolution : 1920x1080 (H.264, yuv420p, 30 fps, CRF 18, faststart)
+  Duration   : 66.2 s
+  Size       : 5.2 MB
+  Shows      : One continuous terminal session (120x32 terminal, GitHub-dark
+               theme, DejaVu Sans Mono 20 px, prompt "demo@odgs:~/collibra-demo$"),
+               real captured output of all six demo commands with simulated
+               human typing and reading pauses:
+      ~0:02  python3 sync_from_collibra.py           (fetch 8 Finance assets,
+                                                      write 2 ODGS schemas; 5 s pause)
+      ~0:12  head -c 1600 schemas/custom/collibra_acme_finance_rules.json  (6 s pause)
+      ~0:24  python3 build_governance_pack.py        (compile + ES256-sign rule pack; 4 s pause)
+      ~0:35  python3 run_enforcement.py payloads/transaction_ok.json   (APPROVED verdict ~0:38; 5 s pause)
+      ~0:47  python3 run_enforcement.py payloads/transaction_bad.json  (BLOCKED / HARD STOP
+                                                      verdict ~0:50, signed audit record; 6 s pause)
+      ~0:56  tail -1 audit/signed_audit.jsonl | python3 -m json.tool | head -30  (5 s pause)
+      ends with ~3 s hold on the final prompt.
+      (Timestamps are accurate to ~1 s. The cast timeline is 70.7 s; the
+      renderer collapses the trailing idle after the last prompt into a 3 s
+      final-frame hold, giving the 66.2 s MP4 — so the pause after the last
+      command reads as ~3 s on screen, not 5 s. Everything earlier is 1:1.)
+  Layout     : terminal canvas is 1469x924, centered on a matching dark
+               background (0x171B21) padded to exactly 1920x1080. Text is
+               rendered 1:1 (no scaling) and fully crisp.
+
+verify_page.png
+  NOT PRODUCED. The container's egress proxy returns a hard policy denial
+  (403 on CONNECT) for www.metricprovenance.com, so the page is unreachable
+  from this environment. Browser tooling (playwright + chromium) is installed
+  and working; only network policy blocks the host.
+
+SOURCES / INTERMEDIATES (kept for possible re-render)
+-----------------------------------------------------
+demo.cast     asciicast v2 of the session (real output bytes + timing). Any
+              renderer (agg, asciinema play) reproduces the video from this.
+demo.gif      agg render of demo.cast (1469x924) that segment_01.mp4 was
+              encoded from.
+raw/*.bin     raw pty captures (120 cols) of each command, recorded live
+              against the running mock Collibra server, in dependency order.
+capture.py    pty capture script.
+build_cast.py cast builder (typing simulation, pacing; seeded RNG, reproducible).
+
+HOW IT WAS MADE / HONESTY NOTES
+-------------------------------
+- vhs was unusable: GitHub release binaries and proxy.golang.org are blocked
+  by egress policy, and vhs HEAD needs Go 1.25.8 (toolchain download blocked;
+  local Go is 1.24.7). Fallback used: real pty captures -> asciicast v2 ->
+  agg (built from git via cargo) -> ffmpeg.
+- All command output in the video is REAL output from a live run (mock
+  Collibra server on :8580, generated outputs cleaned first, keys reused —
+  same as demo_full.sh). A prior full dry run matched verified_run_output.txt
+  except run-specific hashes/UUIDs/timestamps/pid.
+- Typing and pacing are simulated (45-110 ms/keystroke, output streamed over
+  0.5-1.6 s per command, pauses per spec). Command execution is therefore not
+  in real time, but output content is byte-for-byte real.
+- Two cosmetic deviations: (1) a newline was inserted after the head -c 1600
+  output (it ends mid-line with no trailing newline) so the next prompt starts
+  on a fresh line; (2) U+FE0F emoji variation selectors were stripped from the
+  output because the GIF renderer draws them as tofu boxes ("⚠️" -> "⚠",
+  rendered as a clean monochrome warning triangle; "✅" renders in color).
+
+ASSEMBLY NOTES
+--------------
+- Single continuous segment; no concatenation needed for the terminal part.
+- Audio: none (silent video). Add VO/music in assembly if desired.
+- The video starts with ~1.8 s idle prompt and ends with ~2.5 s idle prompt +
+  3 s last-frame hold from the GIF renderer — safe to trim or crossfade.
+- Background hex for matching slides/titles: #171B21 (canvas), theme is agg
+  "github-dark".
+- Timestamps above are approximate (+/- 1 s); key on-screen moments:
+  APPROVED verdict ~0:40, BLOCKED / HARD STOP verdict ~0:50.

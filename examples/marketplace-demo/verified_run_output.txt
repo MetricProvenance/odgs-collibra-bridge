@@ -1,0 +1,155 @@
+[demo_full] mock Collibra up on http://localhost:8580 (pid 7389)
+
+$ pip install odgs-collibra-bridge odgs
+Name: odgs-collibra-bridge
+Version: 0.4.0
+Name: odgs
+Version: 6.0.3
+
+$ python3 sync_from_collibra.py
+==========================================================================
+Connecting to Collibra: http://localhost:8580
+Community:  Finance  (c0mm-0001-fin-4a2b-9c8d7e6f5a4b)
+  Domain:   Finance Glossary  (d0m-1001-glos-4a2b-9c8d7e6f5a4b)
+  Domain:   Data Quality Rules  (d0m-1002-dqrl-4a2b-9c8d7e6f5a4b)
+INFO    odgs_collibra.client | Fetched 8 assets from Collibra
+
+Glossary assets in community 'Finance':
+  [Approved] Business Term      Net Revenue                         (Finance Glossary)
+  [Approved] Metric             Customer Churn Rate                 (Finance Glossary)
+  [Approved] Metric             Gross Margin                        (Finance Glossary)
+  [Approved] Metric             Days Sales Outstanding              (Finance Glossary)
+  [Approved] Business Term      Annual Recurring Revenue            (Finance Glossary)
+  [Approved] Data Quality Rule  Transaction Amount Non-Negative     (Data Quality Rules)
+  [Approved] Data Quality Rule  Customer ID Format Check            (Data Quality Rules)
+  [Approved] Data Quality Rule  Settlement Currency Whitelist       (Data Quality Rules)
+==========================================================================
+
+>>> bridge.sync(community='Finance', output_type='metrics')  [Finance Glossary]
+INFO    odgs_collibra.bridge | Found community: Finance (c0mm-0001-fin-4a2b-9c8d7e6f5a4b)
+INFO    odgs_collibra.client | Fetched 5 assets from Collibra
+INFO    odgs_collibra.bridge | Transforming 5 Collibra assets → ODGS metrics
+WARNING odgs_collibra.transformer | [ODGS Bridge] ⚠️ Compiling unsigned rules for ODGS Community Edition. Get Certified Sovereign Packs at https://platform.metricprovenance.com
+INFO    odgs_collibra.bridge | ✅ Written ODGS schema: /home/claude/work/collibra-demo/schemas/custom/collibra_acme_finance_metrics.json (5 metrics)
+
+>>> bridge.sync(community='Finance', output_type='rules', severity='HARD_STOP')  [Data Quality Rules]
+INFO    odgs_collibra.bridge | Found community: Finance (c0mm-0001-fin-4a2b-9c8d7e6f5a4b)
+INFO    odgs_collibra.client | Fetched 3 assets from Collibra
+INFO    odgs_collibra.bridge | Transforming 3 Collibra assets → ODGS rules
+WARNING odgs_collibra.transformer | [ODGS Bridge] ⚠️ Compiling unsigned rules for ODGS Community Edition. Get Certified Sovereign Packs at https://platform.metricprovenance.com
+INFO    odgs_collibra.bridge | ✅ Written ODGS schema: /home/claude/work/collibra-demo/schemas/custom/collibra_acme_finance_rules.json (3 rules)
+
+Generated ODGS schemas:
+  metrics: /home/claude/work/collibra-demo/schemas/custom/collibra_acme_finance_metrics.json
+  rules:   /home/claude/work/collibra-demo/schemas/custom/collibra_acme_finance_rules.json
+
+$ head -c 1600 schemas/custom/collibra_acme_finance_rules.json
+{
+  "$schema": "https://metricprovenance.com/schemas/odgs/v5",
+  "metadata": {
+    "source": "collibra",
+    "organization": "acme_finance",
+    "bridge": "odgs-collibra-bridge",
+    "bridge_version": "0.3.0",
+    "generated_at": "2026-07-21T09:06:55.948408+00:00",
+    "asset_count": 3
+  },
+  "items": [
+    {
+      "rule_id": "transaction_amount_non_negative",
+      "rule_urn": "urn:odgs:custom:acme_finance:rule:transaction_amount_non_negative",
+      "name": "Transaction Amount Non-Negative",
+      "description": "transaction_amount must be non-negative. Negative amounts must be booked as refunds through the credit-note process, never as negative transactions.",
+      "domain": "Data Quality Rules",
+      "severity": "HARD_STOP",
+      "logic_expression": "transaction_amount >= 0",
+      "source_authority": "collibra:Finance",
+      "legislative_source": "Finance Data Policy FDP-104 §3.2 (SOX 404 control TXN-07)",
+      "verbatim_source_text": "Transaction amounts recorded in the ledger shall be greater than or equal to zero; reversals are processed exclusively via credit notes.",
+      "semantic_hash": "UNATTESTED",
+      "verdict_on_pass": "PASS",
+      "provenance": {
+        "bridge": "odgs-collibra-bridge",
+        "bridge_version": "0.3.0",
+        "synced_at": "2026-07-21T09:06:55.948287+00:00",
+        "source_url": "collibra://a5e7-3001-txnn"
+      },
+      "content_hash": "9bbb18951473eb00bf5b5eada6466aa47006bbfce9fb5f9ccefa76e38c6d0cac"
+    },
+    {
+      "rule_id": "customer_id_format_check",
+      "rule_urn": "urn:odgs:custom:acme_finance:rule:customer_id_for
+  ...
+
+$ python3 build_governance_pack.py
+[keys] Reusing ES256 pack-signing key: /home/claude/work/collibra-demo/keys/es256_pack_signing_key.pem
+[keys] Published public JWKS -> keys/jwks.json (served at http://localhost:8580/jwks.json)
+[keys] Reusing Ed25519 audit-sealing key: /home/claude/work/collibra-demo/keys/audit_ed25519_private.pem
+
+[compile] 5 metrics, 3 enforcement rules from Collibra sync
+  - transaction_amount_non_negative: transaction_amount >= 0  [HARD_STOP]
+  - customer_id_format_check: customer_id != None and customer_id != '' and regex_match('CUST-[0-9]{6}$', customer_id)  [HARD_STOP]
+  - settlement_currency_whitelist: currency == 'USD' or currency == 'EUR' or currency == 'GBP'  [HARD_STOP]
+
+[sign] Rule pack canonical SHA-256: 91fce620b36b6bad1ddb784120dde802b5019700f5d2bef13fd78dadf19af40d
+[sign] JWS (ES256, kid=acme-gov-2026-01, iss=did:web:governance.acme-finance.demo):
+       eyJhbGciOiJFUzI1NiIsImtpZCI6ImFjbWUtZ292LTIwMjYtMDEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJkaWQ6d...
+
+[done] ODGS Sovereign Project written to /home/claude/work/collibra-demo/odgs_project/
+       process context: urn:odgs:process:finance:record_transaction
+       bound rules:     3
+
+$ python3 run_enforcement.py payloads/transaction_ok.json
+==========================================================================
+ODGS ENFORCEMENT  |  process: urn:odgs:process:finance:record_transaction
+payload (transaction_ok.json): {"transaction_id": "TXN-2026-07-21-00187", "customer_id": "CUST-004821", "transaction_amount": 1250.0, "currency": "USD"}
+--------------------------------------------------------------------------
+rule pack signature : VERIFIED (did:web:governance.acme-finance.demo, key acme-gov-2026-01)
+active rules loaded : 3
+
+VERDICT: APPROVED — all governance rules passed
+--------------------------------------------------------------------------
+AUDIT RECORD (engine-generated, tri-partite binding)
+  event_id        : e1625635-0ac0-42d2-a35e-3238bdbb31d9
+  verdict         : APPROVED
+  rule_id         : transaction_amount_non_negative, customer_id_format_check, settlement_currency_whitelist
+  s_cert_status   : ISSUED_AND_VERIFIED  (CERTIFIED)
+  payload_hash    : a73ac807fa71f04ee6a5e1b1c0e68f39a3c0948cc6f2ed7b227e79b9fedeb921
+  definition_hash : 73b59ab5bdc57c14e28220e8c92a0e7d69f403556cb3e94b8ec835ff82b8cb4d
+  config_hash     : 639ace87ac22837e8d67a15ca25913da6c8b103ee892b3db5c44bf0f99636f6a
+  engine log      : /usr/local/lib/python3.11/dist-packages/odgs/audit_logs/audit_2026-07-21.jsonl
+AUDIT SEAL (Ed25519, verified)
+  signature       : 3ef5d0dec04251f6517d8d0432dd1cc16b1afe55647c0c0cbd914309b74350378a03e221a831e95e440ff9c379f36f7bfc24596476e807d7dd40acb1a37f2303
+  public_key      : f0656a4350fc1d0714b71e51199c26c7b67b8e15ffa83126df4a206571fe48c2
+  sealed log      : /home/claude/work/collibra-demo/audit/signed_audit.jsonl
+==========================================================================
+
+$ python3 run_enforcement.py payloads/transaction_bad.json
+==========================================================================
+ODGS ENFORCEMENT  |  process: urn:odgs:process:finance:record_transaction
+payload (transaction_bad.json): {"transaction_id": "TXN-2026-07-21-00188", "customer_id": "CUST-004821", "transaction_amount": -500.0, "currency": "USD"}
+--------------------------------------------------------------------------
+rule pack signature : VERIFIED (did:web:governance.acme-finance.demo, key acme-gov-2026-01)
+active rules loaded : 3
+
+VERDICT: BLOCKED — HARD STOP — Governance Failure: ['Rule transaction_amount_non_negative Failed: Transaction Amount Non-Negative']
+--------------------------------------------------------------------------
+AUDIT RECORD (engine-generated, tri-partite binding)
+  event_id        : 85b49f5a-cb4f-43db-b1a6-af2cb2dd48ba
+  verdict         : BLOCKED
+  rule_id         : transaction_amount_non_negative, customer_id_format_check, settlement_currency_whitelist
+  s_cert_status   : ISSUED_AND_VERIFIED  (CERTIFIED)
+  payload_hash    : 8cfa7c48add68d4d3d0c9e0006398d378f3e21ad55b0f49d136c48a7bac2aecb
+  definition_hash : 73b59ab5bdc57c14e28220e8c92a0e7d69f403556cb3e94b8ec835ff82b8cb4d
+  config_hash     : 639ace87ac22837e8d67a15ca25913da6c8b103ee892b3db5c44bf0f99636f6a
+  violation       : Rule transaction_amount_non_negative Failed: Transaction Amount Non-Negative
+  engine log      : /usr/local/lib/python3.11/dist-packages/odgs/audit_logs/audit_2026-07-21.jsonl
+AUDIT SEAL (Ed25519, verified)
+  signature       : 9831d9f31b8029d7ae254dd1696454b9c4f8d2bed33820270640db76314b1f87043b00c81dcc700d8d74e86ac570921bfcc4a71051455712308d525884bbc405
+  public_key      : f0656a4350fc1d0714b71e51199c26c7b67b8e15ffa83126df4a206571fe48c2
+  sealed log      : /home/claude/work/collibra-demo/audit/signed_audit.jsonl
+==========================================================================
+(exit code 1 — the violating payload was hard-stopped, as intended)
+
+Demo complete. Signed audit trail: audit/signed_audit.jsonl
+[demo_full] stopping mock Collibra
