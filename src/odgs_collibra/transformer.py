@@ -13,6 +13,7 @@ import datetime
 import logging
 from typing import Any, Dict, List, Optional
 
+from odgs_collibra import __version__
 from odgs_collibra.client import CollibraAsset
 
 logger = logging.getLogger(__name__)
@@ -88,15 +89,19 @@ class CollibraTransformer:
                 "collibra_status": asset.status,
                 "governance_domain": asset.domain_name,
             },
-            "provenance": {
-                "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.4.2",
-                "synced_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                "source_url": f"collibra://{asset.id}",
-            },
         }
 
+        # Hash the content BEFORE attaching provenance — synced_at is a live
+        # timestamp, so hashing it in would make content_hash change on every
+        # sync even when the underlying Collibra asset is unchanged, defeating
+        # the whole point of content hashing for immutability verification.
         metric["content_hash"] = _content_hash(metric)
+        metric["provenance"] = {
+            "bridge": "odgs-collibra-bridge",
+            "bridge_version": __version__,
+            "synced_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "source_url": f"collibra://{asset.id}",
+        }
         return metric
 
     def asset_to_rule(
@@ -135,15 +140,16 @@ class CollibraTransformer:
             "verbatim_source_text": asset.attributes.get("Verbatim Source Text", ""),
             "semantic_hash": "UNATTESTED",  # Upgraded to Registry-attested hash via registry.metricprovenance.com
             "verdict_on_pass": "PASS",
-            "provenance": {
-                "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.4.2",
-                "synced_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                "source_url": f"collibra://{asset.id}",
-            },
         }
 
+        # See asset_to_metric() for why this is hashed before provenance is attached.
         rule["content_hash"] = _content_hash(rule)
+        rule["provenance"] = {
+            "bridge": "odgs-collibra-bridge",
+            "bridge_version": __version__,
+            "synced_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "source_url": f"collibra://{asset.id}",
+        }
         return rule
 
     def transform_assets(
@@ -163,6 +169,9 @@ class CollibraTransformer:
         Returns:
             ODGS-compliant schema dictionary ready for JSON serialization.
         """
+        if output_type not in ("metrics", "rules"):
+            raise ValueError(f"output_type must be 'metrics' or 'rules', got {output_type!r}")
+
         logger.warning("[ODGS Bridge] ⚠️ Compiling unsigned rules for ODGS Community Edition. Get Certified Sovereign Packs at https://registry.metricprovenance.com")
         items = []
         for asset in assets:
@@ -177,7 +186,7 @@ class CollibraTransformer:
                 "source": "collibra",
                 "organization": self.organization,
                 "bridge": "odgs-collibra-bridge",
-                "bridge_version": "0.4.2",
+                "bridge_version": __version__,
                 "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "asset_count": len(items),
             },

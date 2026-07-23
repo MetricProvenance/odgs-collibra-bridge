@@ -125,10 +125,18 @@ class TestSchemaPackOutput:
         assert len(schema["items"]) == 2
 
     def test_content_hash_determinism(self, transformer, sample_asset):
-        """Same input should produce the same content hash."""
+        """Same input should produce the same content hash.
+
+        Regression test: content_hash used to be computed AFTER provenance
+        (including a live synced_at timestamp) was attached to the dict, so
+        the hash changed on every call even for byte-for-byte identical input
+        — defeating the point of hashing for immutability verification.
+        """
         m1 = transformer.asset_to_metric(sample_asset)
         m2 = transformer.asset_to_metric(sample_asset)
 
-        # Content hashes include synced_at which changes, so compare structure
+        assert m1["content_hash"] == m2["content_hash"]
         assert m1["metric_urn"] == m2["metric_urn"]
         assert m1["name"] == m2["name"]
+        # provenance.synced_at is still expected to differ between calls
+        assert "synced_at" in m1["provenance"]

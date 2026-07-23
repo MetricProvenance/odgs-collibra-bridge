@@ -83,8 +83,16 @@ class CollibraBridge:
             communities = self.client.list_communities(name=community)
             if not communities:
                 raise ValueError(f"Community '{community}' not found in Collibra.")
-            community_id = communities[0].get("id")
-            logger.info(f"Found community: {community} ({community_id})")
+            exact_matches = [c for c in communities if c.get("name") == community]
+            if len(communities) > 1 and not exact_matches:
+                logger.warning(
+                    f"Collibra returned {len(communities)} communities for name filter "
+                    f"'{community}' with no exact match — using the first result "
+                    f"({communities[0].get('name')!r}). Consider using a more specific filter."
+                )
+            chosen = exact_matches[0] if exact_matches else communities[0]
+            community_id = chosen.get("id")
+            logger.info(f"Found community: {chosen.get('name')} ({community_id})")
 
         # Fetch assets with attributes
         assets = self.client.get_enriched_assets(

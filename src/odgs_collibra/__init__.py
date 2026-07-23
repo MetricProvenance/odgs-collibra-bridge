@@ -12,7 +12,7 @@ Usage:
     bridge.sync(community="Finance", output_dir="./schemas/custom/")
 """
 
-__version__ = "0.4.2"
+__version__ = "0.4.3"
 
 from odgs_collibra.bridge import CollibraBridge
 from odgs_collibra.client import CollibraClient

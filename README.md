@@ -37,7 +37,7 @@ flowchart LR
     end
 
     subgraph ODGS["ODGS Protocol (odgs>=5.1.0)"]
-        I["Universal Interceptor\nHARD_STOP / SOFT_STOP / WARNING / LOG_ONLY"]
+        I["Universal Interceptor\nHARD_STOP / SOFT_STOP / WARNING / INFO"]
         WB["Write-Back\n→ Collibra Activity Stream"]
     end
 
@@ -110,6 +110,8 @@ odgs-collibra write-back \
 
 ### Output Schema
 
+A real `asset_to_rule()` output (`--type rules`):
+
 ```json
 {
   "$schema": "https://metricprovenance.com/schemas/odgs/v5",
@@ -117,16 +119,31 @@ odgs-collibra write-back \
     "source": "collibra",
     "organization": "acme_corp",
     "bridge": "odgs-collibra-bridge",
+    "bridge_version": "0.4.3",
+    "generated_at": "2026-07-23T10:00:00+00:00",
     "asset_count": 42
   },
   "items": [
     {
-      "rule_urn": "urn:odgs:custom:acme_corp:net_revenue",
+      "rule_id": "net_revenue",
+      "rule_urn": "urn:odgs:custom:acme_corp:rule:net_revenue",
       "name": "Net Revenue",
+      "description": "Net revenue must equal gross revenue minus returns",
+      "domain": "Finance",
       "severity": "HARD_STOP",
-      "logic": { "formula": "gross_revenue - returns" },
-      "plain_english_description": "Net revenue must equal gross revenue minus returns",
-      "content_hash": "a1b2c3..."
+      "logic_expression": "gross_revenue - returns",
+      "source_authority": "collibra:Finance Community",
+      "legislative_source": "BRIDGE_GENERATED_UNATTESTED",
+      "verbatim_source_text": "",
+      "semantic_hash": "UNATTESTED",
+      "verdict_on_pass": "PASS",
+      "content_hash": "a1b2c3...",
+      "provenance": {
+        "bridge": "odgs-collibra-bridge",
+        "bridge_version": "0.4.3",
+        "synced_at": "2026-07-23T10:00:00+00:00",
+        "source_url": "collibra://<asset-id>"
+      }
     }
   ]
 }

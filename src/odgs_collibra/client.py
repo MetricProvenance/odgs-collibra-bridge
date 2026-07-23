@@ -141,10 +141,10 @@ class CollibraClient:
                 id=raw.get("id", ""),
                 name=raw.get("name", ""),
                 display_name=raw.get("displayName", raw.get("name", "")),
-                asset_type=raw.get("type", {}).get("name", "Unknown"),
-                domain_name=raw.get("domain", {}).get("name", ""),
-                community_name=raw.get("domain", {}).get("community", {}).get("name", ""),
-                status=raw.get("status", {}).get("name", ""),
+                asset_type=(raw.get("type") or {}).get("name", "Unknown"),
+                domain_name=(raw.get("domain") or {}).get("name", ""),
+                community_name=((raw.get("domain") or {}).get("community") or {}).get("name", ""),
+                status=(raw.get("status") or {}).get("name", ""),
                 description=raw.get("description", ""),
             )
             assets.append(asset)
@@ -160,7 +160,7 @@ class CollibraClient:
 
         attributes = {}
         for attr in raw_attrs:
-            attr_name = attr.get("type", {}).get("name", "unknown")
+            attr_name = (attr.get("type") or {}).get("name", "unknown")
             attr_value = attr.get("value", "")
             attributes[attr_name] = attr_value
 
