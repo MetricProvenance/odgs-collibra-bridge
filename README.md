@@ -183,9 +183,9 @@ This bridge is designed for organisations governed by:
 | **DORA (Regulation EU 2022/2554)** | ICT operational resilience — data lineage and incident traceability |
 | **GDPR Article 5(2)** | Accountability principle — demonstrable data governance |
 
-> For cryptographic attestation (Ed25519 JWS audit seals and signed `.odgs-bundle` Regulation Packs for EU AI Act, DORA, and CSRD), see the **[Metric Provenance Enterprise Platform](https://www.metricprovenance.com/pricing)**.
+> For cryptographic attestation (Ed25519 JWS audit seals and signed `.odgs-bundle` Regulation Packs for EU AI Act, DORA, and CSRD), see the **[Metric Provenance Enterprise Platform](https://www.metricprovenance.com/#suite)**.
 
-> **Get started:** [metricprovenance.com/start](https://www.metricprovenance.com/start) (guided walkthrough) · **Certified packs:** [metricprovenance.com/pricing](https://www.metricprovenance.com/pricing)
+> **Get started:** [metricprovenance.com/executive-brief](https://www.metricprovenance.com/executive-brief) (Executive Brief) · **Certified packs:** [metricprovenance.com/#suite](https://www.metricprovenance.com/#suite)
 
 ---
 
