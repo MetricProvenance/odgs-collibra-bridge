@@ -1,7 +1,7 @@
 # ODGS Collibra Bridge
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![ODGS](https://img.shields.io/badge/ODGS-v5.1+_|_v6.0_Compatible-0055AA)](https://github.com/MetricProvenance/odgs-protocol)
+[![ODGS](https://img.shields.io/badge/ODGS-v6.1_Compatible-0055AA)](https://github.com/MetricProvenance/odgs-protocol)
 [![PyPI](https://img.shields.io/pypi/v/odgs-collibra-bridge)](https://pypi.org/project/odgs-collibra-bridge/)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://pypi.org/project/odgs-collibra-bridge/)
 
@@ -36,7 +36,7 @@ flowchart LR
         TR["Transformer\n→ ODGS Schema"]
     end
 
-    subgraph ODGS["ODGS Protocol (odgs>=5.1.0)"]
+    subgraph ODGS["ODGS Protocol (odgs>=6.1.0)"]
         I["Universal Interceptor\nHARD_STOP / SOFT_STOP / WARNING / INFO"]
         WB["Write-Back\n→ Collibra Activity Stream"]
     end
@@ -119,7 +119,7 @@ A real `asset_to_rule()` output (`--type rules`):
     "source": "collibra",
     "organization": "acme_corp",
     "bridge": "odgs-collibra-bridge",
-    "bridge_version": "0.4.3",
+    "bridge_version": "0.4.4",
     "generated_at": "2026-07-23T10:00:00+00:00",
     "asset_count": 42
   },
@@ -140,7 +140,7 @@ A real `asset_to_rule()` output (`--type rules`):
       "content_hash": "a1b2c3...",
       "provenance": {
         "bridge": "odgs-collibra-bridge",
-        "bridge_version": "0.4.3",
+        "bridge_version": "0.4.4",
         "synced_at": "2026-07-23T10:00:00+00:00",
         "source_url": "collibra://<asset-id>"
       }
@@ -183,7 +183,7 @@ This bridge is designed for organisations governed by:
 | **DORA (Regulation EU 2022/2554)** | ICT operational resilience — data lineage and incident traceability |
 | **GDPR Article 5(2)** | Accountability principle — demonstrable data governance |
 
-> For cryptographic legal indemnity (Ed25519 JWS audit seals, certified Sovereign Packs for DORA/EU AI Act), see the **[Metric Provenance Enterprise Platform](https://registry.metricprovenance.com)**.
+> For cryptographic attestation (Ed25519 JWS audit seals and signed `.odgs-bundle` Regulation Packs for EU AI Act, DORA, and CSRD), see the **[Metric Provenance Enterprise Platform](https://www.metricprovenance.com/pricing)**.
 
 > **Get started:** [metricprovenance.com/start](https://www.metricprovenance.com/start) (guided walkthrough) · **Certified packs:** [metricprovenance.com/pricing](https://www.metricprovenance.com/pricing)
 
@@ -192,7 +192,7 @@ This bridge is designed for organisations governed by:
 ## Requirements
 
 - Python ≥ 3.9
-- `odgs` ≥ 5.1.0 (core protocol — v6.0 compatible)
+- `odgs` ≥ 6.1.0 (core protocol)
 - Collibra Data Intelligence Platform (any version with REST API v2)
 
 ---
